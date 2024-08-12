@@ -22,6 +22,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef CLOG_H
 #define CLOG_H
 
+#define CLOG_VERSION "0.1"
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
