@@ -1,4 +1,4 @@
-[sample warning](/screenshots/sample_usage_warning.png)
+![sample warning](/screenshots/sample_usage_warning.png)
 
 # Clog
 A simple, lightweight and thread-safe logging library written in C.
@@ -39,7 +39,7 @@ For instance:
 ```c
 clog_log( CLOG_WARN, stdout, "This is some warning where an invalid access was made to the address %p", 0x0f0f );
 ```
-[sample warning](/screenshots/sample_usage_warning.png)
+![sample warning](/screenshots/sample_usage_warning.png)
 
 # TODOs
 - Cross platform support for Windows and Mac.
