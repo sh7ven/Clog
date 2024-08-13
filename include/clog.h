@@ -33,9 +33,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <time.h>
 #include <pthread.h>
 #include <stdbool.h>
+
+
 // TODO: better OS-classification for complete cross-platform support
-
-
 #if defined(__linux__) || defined(__unix__)
 #define CLOG_HAS_LINUX
 #include <unistd.h>
