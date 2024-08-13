@@ -91,7 +91,7 @@ static char* CLOG_TIMESTAMP_FMT = "%H:%M:%S";
 /* (internal) Maximum size for a timestamp string, 
  * to prevent cluttering of the output message. */
 static const uint8_t CLOG_TIMESTAMP_FMT_MAX_SIZE = 32;
-#define CLOG_TIMESTAMP_FMT_SIZE strlen(CLOG_TIMESTAMP_FMT)
+// #define CLOG_TIMESTAMP_FMT_SIZE strlen(CLOG_TIMESTAMP_FMT)
 
 /// Logs a message described by `fmt` into a `stream` (for instance, `stdout`).
 extern void clog_log(clog_priority priority, FILE* stream, const char* fmt, ...);
@@ -103,6 +103,6 @@ extern void clog_log(clog_priority priority, FILE* stream, const char* fmt, ...)
 #define clog_err(...)   clog_log(CLOG_ERROR, __VA_ARGS__)
 
 /// Set format of the timestamp in a logged output. 
-extern void clog_set_time_fmt(char* format) __attribute__((always_inline));
+extern void clog_set_time_fmt(char* format);
 
 #endif

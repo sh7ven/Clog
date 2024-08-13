@@ -59,9 +59,9 @@ void clog_log(clog_priority priority, FILE* stream, const char* fmt, ...) {
 	va_start(arglist, fmt);
 	va_copy(argcopy, arglist);
 
-	char timestamp[CLOG_TIMESTAMP_FMT_SIZE];
+	char timestamp[CLOG_TIMESTAMP_FMT_MAX_SIZE];
 	time_t now = time(NULL);
-	strftime(timestamp, CLOG_TIMESTAMP_FMT_SIZE+1, CLOG_TIMESTAMP_FMT, localtime(&now));
+	strftime(timestamp, CLOG_TIMESTAMP_FMT_MAX_SIZE+1, CLOG_TIMESTAMP_FMT, localtime(&now));
 
 	unsigned long fmt_msg_len = vsnprintf(NULL, 0, fmt, arglist);
 	char* fmt_msg = (char*) malloc(fmt_msg_len);
@@ -79,7 +79,7 @@ void clog_log(clog_priority priority, FILE* stream, const char* fmt, ...) {
 }
 
 
-inline void clog_set_time_fmt(char* format) {
+void clog_set_time_fmt(char* format) {
 	assert(format != NULL);
 	CLOG_TIMESTAMP_FMT = format;
 }

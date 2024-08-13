@@ -41,6 +41,21 @@ clog_log( CLOG_WARN, stdout, "This is some warning where an invalid access was m
 ```
 ![sample warning](/screenshots/sample_usage_warning.png)
 
+## Custom timestamps
+The format for the timestamp shown on the left can be changed with:
+```c
+void clog_set_time_fmt(char* format);
+```
+
+For instance,
+```c
+clog_set_time_fmt( "%Y-%m-%d %H:%M:%S" );
+```
+![custom timestamp](/screenshots/custom_timestamp.png)
+
+### Known limitation
+Right now, the timestamp string has been clamped to a maximum of `32` characters. I'll think of a workaround for this in the future.
+
 # TODOs
 - Cross platform support for Windows and Mac.
 - Better (production level) thread safety.
