@@ -51,6 +51,6 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-/screenshots/
+# /screenshots/
 /tests/
-*.png
+# *.png
