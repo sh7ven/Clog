@@ -6,7 +6,7 @@ A simple, lightweight and thread-safe logging library written in C.
 # Installation
 Clone the repository and place the source files inside your project.
 ```
-$ git clone https://github.com/shivenkashyapp/clog
+$ git clone https://github.com/thesvn/clog
 ```
 
 ### Example project structure
