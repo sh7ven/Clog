@@ -53,13 +53,12 @@ clog_set_time_fmt( "%Y-%m-%d %H:%M:%S" );
 ```
 ![custom timestamp](/screenshots/custom_timestamp.png)
 
-### Known limitation
-Right now, the timestamp string has been clamped to a maximum of `32` characters to prevent cluttering the log output. I'll think of a workaround for this in the future.
+Right now, the timestamp string has been clamped to a maximum of `32` characters to prevent cluttering the log output.
 
 # TODOs
 - Cross platform support for Windows and Mac.
-- Better (production level) thread safety.
-- Managing backup logs.
+- Better thread safety.
+- Managing backup logs to some local file.
 
 # License
 [MIT](https://opensource.org/license/MIT)
