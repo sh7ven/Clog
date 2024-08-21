@@ -15,7 +15,7 @@ For instance:
 ```make
 # File names alongside are Project's dependencies.
 
-Project: include/file1.h src/file1.c ... src/clog.c include/clog.h
+Project: include/file1.h src/file1.c ... include/clog.h
     @gcc $(SOME_FLAGS) -I./include/ src/*
 ```
 See [GNU Make](https://www.gnu.org/software/make/).
