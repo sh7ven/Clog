@@ -6,27 +6,18 @@ A simple, lightweight and thread-safe logging library written in C.
 # Installation
 Clone the repository and place the source files inside your project.
 ```
-$ git clone https://github.com/thesvn/clog
+$ git clone https://github.com/thesvn/Clog
 ```
 
-### Example project structure
-```
-├── include
-├── src
-└── README.md
-```
+Add `clog.h` to an include directory, and add it to a build script as well.
 
-Place `clog.c` inside `src/`, and `clog.h` inside `include/`. 
-Add these sources to a `Makefile`, if you're using one.
-
-For instance,
+For instance:
 ```make
 # File names alongside are Project's dependencies.
 
 Project: include/file1.h src/file1.c ... src/clog.c include/clog.h
     @gcc $(SOME_FLAGS) -I./include/ src/*
 ```
-
 See [GNU Make](https://www.gnu.org/software/make/).
 
 # Usage
@@ -35,25 +26,19 @@ The function definition for logging is:
 void clog_log(clog_priority priority, FILE* stream, const char* fmt, ...)
 ```
 
-For instance:
+For instance
 ```c
 clog_log( CLOG_WARN, stdout, "This is some warning where an invalid access was made to the address %p", 0x0f0f );
 ```
 ![sample warning](/screenshots/sample_usage_warning.png)
 
-## Custom timestamps
-The format for the timestamp shown on the left can be changed with:
-```c
-void clog_set_time_fmt(char* format);
+You can also use some macros to quickly pipe output, instead of specifying a priority level everytime:
 ```
-
-For instance,
-```c
-clog_set_time_fmt( "%Y-%m-%d %H:%M:%S" );
+clog_info(...)
+clog_debug(...)
+clog_warn(...)
+clog_err(...)
 ```
-![custom timestamp](/screenshots/custom_timestamp.png)
-
-Right now, the timestamp string has been clamped to a maximum of `32` characters to prevent cluttering the log output.
 
 # TODOs
 - Cross platform support for Windows and Mac.
