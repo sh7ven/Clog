@@ -1,7 +1,7 @@
 ![sample warning](/screenshots/sample_usage_warning.png)
 
 # Clog
-A simple, lightweight and thread-safe logging library written in C.
+A header-only, simple and thread-safe logging library written in C.
 
 # Installation
 Clone the repository and place the source files inside your project.
