@@ -22,7 +22,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #ifndef CLOG_H
 #define CLOG_H
 
-#define CLOG_VERSION "0.2"
+#define CLOG_VERSION "0.3"
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -38,33 +38,31 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 // TODO: better OS-classification for complete cross-platform support
 #if defined(__linux__) || defined(__unix__)
 #define CLOG_HAS_LINUX
+#include <pwd.h>
 #include <unistd.h>
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
 #define CLOG_HAS_WINDOWS
 #include <windows.h>
+#include <shlobj.h>
+#include <io.h>
+#define access _access
 #endif
 
 /* TODO: Clang specific attribute(s)? */
 #define CLOG_INTERNAL static
 
-/// (forced) Inline constructor.
-#define CLOG_INLINE_CONSTRUCTOR __attribute__((destructor,  always_inline)) inline
-
-/// (forced) Inline destructor.
-#define CLOG_INLINE_DESTRUCTOR  __attribute__((constructor, always_inline)) inline
+/// Constructor with defined integral priority.
+#define CLOG_CONSTRUCTOR(n) __attribute__((constructor(n)))
+#define CLOG_DESTRUCTOR 	__attribute__((  destructor  ))
 
 /// Global mutex handle.
 CLOG_INTERNAL pthread_mutex_t clog_mutex_global = PTHREAD_MUTEX_INITIALIZER;
 
 /// Initialize the library.
-CLOG_INTERNAL CLOG_INLINE_CONSTRUCTOR void clog_init(void) {
+CLOG_INTERNAL CLOG_CONSTRUCTOR(101) void clog_init(void) {
 	pthread_mutex_init(&clog_mutex_global, NULL);
-}
-
-CLOG_INTERNAL CLOG_INLINE_DESTRUCTOR void clog_exit(void) {
-	pthread_mutex_destroy(&clog_mutex_global);
 }
 
 /// Lock the global mutex.
@@ -81,16 +79,47 @@ typedef enum {
 	CLOG_ERROR
 } clog_priority;
 
-CLOG_INTERNAL const uint8_t 
-	CLOG_MIN_PRIORITY = 0,
-	CLOG_MAX_PRIORITY = 4;
+CLOG_INTERNAL const uint8_t CLOG_MIN_PRIORITY = 0,
+							CLOG_MAX_PRIORITY = 4;
 
 CLOG_INTERNAL bool clog_will_backup = false;
-// TODO: decide a fixed path to backup logs.
-// CLOG_INTERNAL const FILE* clog_backup_file = NULL;
+CLOG_INTERNAL char clog_backup_fp[1024]; /* Can paths get any bigger? :P */
+CLOG_INTERNAL FILE* clog_backup_file = NULL;
+
+/* Does a file at `path` exist? */
+CLOG_INTERNAL bool exists(const char* path) {
+	return access(path, F_OK) == 0;
+}
+
+/// define a platform-specific backup file for Clog.
+CLOG_INTERNAL CLOG_CONSTRUCTOR(102) void clog_define_backup(void) {
+#ifdef CLOG_HAS_LINUX
+	// pre-defined config directory.
+	if (getenv("XDG_CONFIG_HOME") != NULL)
+		strcpy(clog_backup_fp, getenv("XDG_CONFIG_HOME"));
+	else
+		strcpy(clog_backup_fp, getenv("HOME")); /* $HOME/.config */
+	// TODO: HOME might return NULL as well.
+#else
+	char backup_fp[1024];
+	/* TODO: alternate path if SHGetKnownFolderPath does not return `SUCCESS`. */
+	SHGetKnownFolderPath(NULL, CSIDL_APPDATA, NULL, backup_fp);
+#endif
+
+	strcat(clog_backup_fp, "/clogfile");
+	
+	printf("Test: %s\n", clog_backup_fp);
+
+	if (!exists(clog_backup_fp)) 
+		clog_backup_file = fopen(clog_backup_fp, "w+"); // initial file creation
+	else
+		clog_backup_file = fopen(clog_backup_fp,  "a");
+}
 
 /// Tell Clog to backup logs to a file as well.
-void clog_backup_logs(bool backup) { clog_will_backup = backup; }
+void clog_backup_logs(bool backup) { 
+	clog_will_backup = backup; 
+}
 
 /// hardcoded string sizes to prevent calling `strlen()` again and again.
 CLOG_INTERNAL const uint8_t CLOG_PRIORITY_STRING_SIZES[] = { 14, 15, 17, 15 };
@@ -101,6 +130,8 @@ CLOG_INTERNAL const char* CLOG_PRIORITY_STRINGS[] = {
 	"\x1b[35m[WARNING]\x1b[m",
 	"\x1b[31m[ERROR]\x1b[m"
 };
+
+CLOG_INTERNAL const char* CLOG_PRIORITY_STRINGS_NOESC[] = { "[INFO]", "[DEBUG]", "[WARNING]", "[ERROR]" };
 
 #define CLOG_TIMESTAMP_FMT "%H:%M:%S"
 #define CLOG_TIMESTAMP_FMT_MAX_SIZE 9
@@ -126,12 +157,24 @@ void clog_log(clog_priority priority, FILE* stream, const char* fmt, ...) {
 
 	fprintf(stream, "%s %s %s\n", timestamp, CLOG_PRIORITY_STRINGS[priority], fmt_msg);
 
+	if (clog_will_backup && clog_backup_file)
+		fprintf(clog_backup_file, "%s %s %s\n", timestamp, CLOG_PRIORITY_STRINGS_NOESC[priority], fmt_msg);
+
 	free(fmt_msg);
 	va_end(argcopy);
 	va_end(arglist);
 
 	clog_lock(0);
 }
+
+CLOG_INTERNAL CLOG_DESTRUCTOR void clog_exit(void) {
+	pthread_mutex_destroy(&clog_mutex_global);
+	
+	fflush(clog_backup_file);
+	free(clog_backup_file);
+}
+
+
 
 /// Utility macros for quickly logging a message to stdout.
 #define clog_info(...)  clog_log(CLOG_INFO,  __VA_ARGS__)

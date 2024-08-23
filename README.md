@@ -40,10 +40,22 @@ clog_warn(...)
 clog_err(...)
 ```
 
+# Save logs to file
+You can instruct Clog to save logs to a backup file as well. 
+```c
+// Call this before logging any output. 
+clog_backup_logs(true);
+```
+
+This file is platform specific and is opened as soon you include `clog.h`.
+On Linux distributions, it is `$XDG_CONFIG_HOME/clogfile` or `$HOME/.config/clogfile`.
+On Windows, it is `..\AppData\clogfile`.
+
 # TODOs
-- Cross platform support for Windows and Mac.
+- Better cross platform support for Windows and Mac.
 - Better thread safety.
-- Managing backup logs to some local file.
+- Pure private functions (hard) to prevent unnecessary problems.
 
 # License
 [MIT](https://opensource.org/license/MIT)
+
