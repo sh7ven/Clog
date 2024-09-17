@@ -52,6 +52,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /* TODO: Clang specific attribute(s)? */
 #define CLOG_INTERNAL static
+#define CLOG_PRIVATE static inline __attribute__((always_inline))
 
 /// Constructor with defined integral priority.
 #define CLOG_CONSTRUCTOR(n) __attribute__((constructor(n)))
@@ -61,12 +62,12 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 CLOG_INTERNAL pthread_mutex_t clog_mutex_global = PTHREAD_MUTEX_INITIALIZER;
 
 /// Initialize the library.
-CLOG_INTERNAL CLOG_CONSTRUCTOR(101) void clog_init(void) {
+CLOG_PRIVATE CLOG_CONSTRUCTOR(101) void clog_init(void) {
 	pthread_mutex_init(&clog_mutex_global, NULL);
 }
 
 /// Lock the global mutex.
-CLOG_INTERNAL void clog_lock(bool lock) {
+CLOG_PRIVATE void clog_lock(bool lock) {
 	// imagine trying to write maintainable code
 	lock? (pthread_mutex_lock(&clog_mutex_global)) : (pthread_mutex_unlock(&clog_mutex_global));
 }
@@ -79,20 +80,21 @@ typedef enum {
 	CLOG_ERROR
 } clog_priority;
 
-CLOG_INTERNAL const uint8_t CLOG_MIN_PRIORITY = 0,
-							CLOG_MAX_PRIORITY = 4;
+CLOG_INTERNAL const uint8_t 	
+	CLOG_MIN_PRIORITY = 0,
+	CLOG_MAX_PRIORITY = 4;
 
 CLOG_INTERNAL bool clog_will_backup = false;
 CLOG_INTERNAL char clog_backup_fp[1024]; /* Can paths get any bigger? :P */
 CLOG_INTERNAL FILE* clog_backup_file = NULL;
 
 /* Does a file at `path` exist? */
-CLOG_INTERNAL bool exists(const char* path) {
+CLOG_PRIVATE bool exists(const char* path) {
 	return access(path, F_OK) == 0;
 }
 
 /// define a platform-specific backup file for Clog.
-CLOG_INTERNAL CLOG_CONSTRUCTOR(102) void clog_define_backup(void) {
+CLOG_PRIVATE CLOG_CONSTRUCTOR(102) void clog_define_backup(void) {
 #ifdef CLOG_HAS_LINUX
 	// pre-defined config directory.
 	if (getenv("XDG_CONFIG_HOME") != NULL)
