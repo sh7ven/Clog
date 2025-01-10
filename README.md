@@ -6,7 +6,7 @@ A header-only, simple and thread-safe logging library written in C.
 # Installation
 Clone the repository and place the source files inside your project.
 ```
-$ git clone https://github.com/shivenkashyapp/Clog/
+$ git clone https://github.com/sh7ven/Clog/
 ```
 
 Add `clog.h` to an include directory, and add it to a build script as well.
