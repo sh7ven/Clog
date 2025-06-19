@@ -3,6 +3,9 @@
 # Clog
 A header-only, simple and thread-safe logging library written in C.
 
+> [!WARNING]
+> I'm in the process of rewriting Clog to complete thread safety and cross-platform support, and add things like compliance with C++ standard.
+
 # Installation
 Clone the repository and place the source files inside your project.
 ```
